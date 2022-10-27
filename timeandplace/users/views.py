@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect
-from .forms import NewUserForm
+from .forms import NewUserForm, ProfileForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 
 # Create your views here.
-from django.http import HttpResponse
+# from django.http import HttpResponse
 
 
 def index(request):
@@ -18,11 +18,11 @@ def register_request(request):
 	if request.method == "POST":
 		form = NewUserForm(request.POST)
 		if form.is_valid():
-			user = form.save()
+			form.save()
 			# login(request, user)
 			messages.success(request, "Registration successful." )
 			username = form.cleaned_data.get("username")
-			messages.success(request, f"Account Created. You can now log in")
+			messages.success(request, f"Account Created. You can now log in {username}")
 			return redirect("login")
 		messages.error(request, "Unsuccessful registration. Invalid information.")
 	else:
@@ -51,3 +51,8 @@ def logout_request(request):
 	logout(request)
 	messages.info(request, "You have successfully logged out.") 
 	return redirect("main:index")
+
+# Add profile view
+def profile(request):
+	context = {'profile_form': ProfileForm()}
+	return render(request, template_name='users/profile.html', context=context)
